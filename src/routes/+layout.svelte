@@ -1136,15 +1136,6 @@
 			loaded = true;
 		}
 
-		// Auto-show SyncStatsModal when opened with ?sync=true (from community)
-		if (
-			(window.opener ?? false) &&
-			$page.url.searchParams.get('sync') === 'true' &&
-			($config?.features?.enable_community_sharing ?? false)
-		) {
-			showSyncStatsModal = true;
-		}
-
 		return () => {
 			window.removeEventListener('resize', onResize);
 			window.removeEventListener('message', windowMessageEventHandler);
@@ -1195,9 +1186,6 @@
 	{/if}
 {/if}
 
-{#if $config?.features.enable_community_sharing}
-	<SyncStatsModal bind:show={showSyncStatsModal} eventData={syncStatsEventData} />
-{/if}
 
 <Toaster
 	theme={$theme.includes('dark')
