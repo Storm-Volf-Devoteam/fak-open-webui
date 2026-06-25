@@ -1,0 +1,30 @@
+/* ============================================
+   FAK (Forsvarsakademiet) Supplementary Theme
+   Adds institutional styling without replacing
+   Open WebUI branding.
+   ============================================ */
+
+:root {
+  --fak-navy: #1B2A4A;
+  --fak-navy-light: #243561;
+  --fak-gold: #C8A951;
+  --fak-gold-light: #D4BC6E;
+  --fak-gold-dark: #A88B3A;
+}
+
+/* --- Subtle navy tint on dark mode grays --- */
+html.dark {
+  --color-gray-800: oklch(0.25 0.03 250);
+  --color-gray-850: oklch(0.2 0.035 250);
+  --color-gray-900: oklch(0.16 0.035 250);
+  --color-gray-950: oklch(0.12 0.04 250);
+}
+
+/* --- Scrollbar accent --- */
+::-webkit-scrollbar-thumb {
+  background-color: var(--fak-navy-light) !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--fak-gold-dark) !important;
+}

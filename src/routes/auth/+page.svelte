@@ -257,17 +257,6 @@
 				{:else}
 					<div class="my-auto flex flex-col justify-center items-center">
 						<div class=" sm:max-w-md my-auto pb-10 w-full dark:text-gray-100">
-							{#if $config?.metadata?.auth_logo_position === 'center'}
-								<div class="flex justify-center mb-6">
-									<img
-										id="logo"
-										crossorigin="anonymous"
-										src="{WEBUI_BASE_URL}/static/favicon.png"
-										class="size-24 rounded-full"
-										alt="{$WEBUI_NAME} logo"
-									/>
-								</div>
-							{/if}
 							<form
 								class=" flex flex-col justify-center"
 								on:submit={(e) => {
@@ -288,6 +277,14 @@
 										{/if}
 									</div>
 
+									<div class="flex justify-center mt-4 mb-2">
+										<img
+											src="/static/fak-logo.png"
+											class="h-28 w-auto"
+											alt="Forsvarsakademiet logo"
+										/>
+									</div>
+
 									{#if $config?.onboarding ?? false}
 										<div class="mt-1 text-xs font-medium text-gray-600 dark:text-gray-500">
 											ⓘ {$WEBUI_NAME}
@@ -296,6 +293,10 @@
 											)}
 										</div>
 									{/if}
+
+									<div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+										{$i18n.t('Kun til autoriseret personel. Al aktivitet logges.')}
+									</div>
 								</div>
 
 								{#if $config?.features.enable_login_form || $config?.features.enable_ldap || form}
