@@ -2530,31 +2530,28 @@ except Exception as e:
 if default_prompt_suggestions == []:
     default_prompt_suggestions = [
         {
-            'title': ['Help me study', 'vocabulary for a college entrance exam'],
-            'content': "Help me study vocabulary: write a sentence for me to fill in the blank, and I'll try to pick the correct option.",
+            'title': ['Opsummer', 'et dokument eller en rapport'],
+            'content': 'Opsummer venligst det vedlagte dokument med de vigtigste punkter og konklusioner.',
         },
         {
-            'title': ['Give me ideas', "for what to do with my kids' art"],
-            'content': "What are 5 creative things I could do with my kids' art? I don't want to throw them away, but it's also so much clutter.",
+            'title': ['Forklar', 'et fagligt koncept i simple termer'],
+            'content': 'Forklar dette koncept i simple termer, som om du forklarer det til en kollega uden faglig baggrund.',
         },
         {
-            'title': ['Tell me a fun fact', 'about the Roman Empire'],
-            'content': 'Tell me a random fun fact about the Roman Empire',
+            'title': ['Skriv udkast', 'til en mail eller et notat'],
+            'content': 'Hjaelp mig med at skrive et professionelt udkast til en mail eller et internt notat.',
         },
         {
-            'title': ['Show me a code snippet', "of a website's sticky header"],
-            'content': "Show me a code snippet of a website's sticky header in CSS and JavaScript.",
+            'title': ['Analyser', 'fordele og ulemper ved en beslutning'],
+            'content': 'Analyser fordele og ulemper ved denne beslutning og giv en struktureret anbefaling.',
         },
         {
-            'title': [
-                'Explain options trading',
-                "if I'm familiar with buying and selling stocks",
-            ],
-            'content': "Explain options trading in simple terms if I'm familiar with buying and selling stocks.",
+            'title': ['Gennemgaa', 'og forbedre en tekst'],
+            'content': 'Gennemgaa denne tekst for klarhed, struktur og sproglige fejl, og foreslaa forbedringer.',
         },
         {
-            'title': ['Overcome procrastination', 'give me tips'],
-            'content': 'Could you start by asking me about instances when I procrastinate the most and then give me some suggestions to overcome it?',
+            'title': ['Giv overblik', 'over et emne'],
+            'content': 'Giv mig et struktureret overblik over dette emne med de vigtigste aspekter.',
         },
     ]
 
