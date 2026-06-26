@@ -23,16 +23,7 @@ Baseret på Open WebUI commit `02dc3e689` (main branch).
 - Guld-accent på scrollbars
 - CSS-variabler: `--fak-navy`, `--fak-gold` osv.
 
-### 4. Danske prompt-forslag
-**Fil:** `backend/open_webui/config.py`
-- Erstattet engelske standard-forslag med 6 danske FAK-relevante forslag
-- **NB:** Database-værdien skal også opdateres (se "Database-ændringer" nedenfor)
-
-### 5. FAK undertekst på forsiden
-**Fil:** `src/lib/components/chat/Placeholder.svelte`
-- Tilføjet "Forsvarsakademiets AI-assistent — stil et spørgsmål eller vælg et forslag herunder." under velkomsttitlen
-
-### 6. Fjernede eksterne community-links og -funktioner
+### 3. Fjernede eksterne community-links og -funktioner
 
 | Fil | Hvad blev fjernet |
 |-----|-------------------|
@@ -46,20 +37,20 @@ Baseret på Open WebUI commit `02dc3e689` (main branch).
 | `src/lib/components/workspace/Prompts.svelte` | Community-sektion + shareHandler |
 | `src/lib/components/workspace/Tools.svelte` | Community-sektion + shareHandler |
 
-### 7. Fjernede visse input-menu funktioner
+### 5. Fjernede visse input-menu funktioner
 **Fil:** `src/lib/components/chat/MessageInput/InputMenu.svelte`
 - Fjernet Capture (kamera/screenshot) knap
 - Fjernet Attach Webpage knap og modal
 - Fjernet Attach Notes knap og tab view
 - **Beholdt:** Google Drive og OneDrive integrationer (restored)
 
-### 8. Fjernede Read Aloud (TTS) fra chat
+### 6. Fjernede Read Aloud (TTS) fra chat
 **Fil:** `src/lib/components/chat/Messages/ResponseMessage.svelte`
 - Fjernet Read Aloud-knap og speak/stopAudio-funktioner
 - Fjernet Continue Response-knap
 - Fjernet Info/token-usage knap (prompt_tokens, total_tokens visning)
 
-### 9. Fjernede sidebar-navigation
+### 7. Fjernede sidebar-navigation
 **Fil:** `src/lib/components/layout/Sidebar.svelte`
 - Fjernet Notes fra sidebar og pinned items
 - Fjernet Calendar fra sidebar
@@ -67,7 +58,7 @@ Baseret på Open WebUI commit `02dc3e689` (main branch).
 - Fjernet Playground fra sidebar
 - Kun Workspace forbliver som sidebar-menu-item
 
-### 10. Fjernede Notes, Calendar, Automations og Playground fra brugermenu
+### 8. Fjernede Notes, Calendar, Automations og Playground fra brugermenu
 **Fil:** `src/lib/components/layout/Sidebar/UserMenu.svelte`
 - Fjernet Notes-link og pin-mulighed
 - Fjernet Calendar-link og pin-mulighed
@@ -75,7 +66,7 @@ Baseret på Open WebUI commit `02dc3e689` (main branch).
 - Fjernet Playground-link og pin-mulighed
 - Ændret DEFAULT_PINNED_ITEMS til kun `['workspace']`
 
-### 11. FAK-logo som default profilbillede
+### 9. FAK-logo som default profilbillede
 **Fil:** `static/static/fak-logo.png` (ny fil)
 - FAK våbenskjold (ugle med krone, "Sapientia et Providentia") tilføjet som fallback profilbillede
 
@@ -104,16 +95,38 @@ Baseret på Open WebUI commit `02dc3e689` (main branch).
 
 **NB:** App-logoet i sidebar-headeren (`Sidebar.svelte`) og notifikationer forbliver som `favicon.png` — dette er Open WebUI branding (licensbeskyttet).
 
-### 12. Fjernede brugerstatus fra brugermenu
+### 10. Fjernede brugerstatus fra brugermenu
 **Fil:** `src/lib/components/layout/Sidebar/UserMenu.svelte`
 - Fjernet "Aktiv"/"Fraværende" status-indikator
 - Fjernet "Opdater din status" knap og emoji-status visning
 - Fjernet UserStatusModal trigger (modal-komponent stadig tilgængelig hvis behov)
 
-### 13. Fjernede "Foreslået" prompt-forslag under chat-input
+### 11. Fjernede "Foreslået" prompt-forslag under chat-input
 **Filer:**
 - `src/lib/components/chat/Placeholder.svelte` — Fjernet `<Suggestions>` komponent fra velkomstsiden
 - `src/lib/components/chat/ChatPlaceholder.svelte` — Fjernet `<Suggestions>` komponent fra model-placeholder
+
+### 12. Fjernede FAK-logo fra login-siden
+**Fil:** `src/routes/auth/+page.svelte`
+- Fjernet FAK-logo (`fak-logo.png`) fra login-siden for at undgå visuel overskyggelse af Open WebUI-branding (licensens §4 "obscuring"-klausul)
+- Login-disclaimer ("Kun til autoriseret personel. Al aktivitet logges.") er bevaret
+
+### 13. Dansk titelgenerering uden emojis
+**Fil:** `backend/open_webui/config.py`
+- Ændret `DEFAULT_TITLE_GENERATION_PROMPT_TEMPLATE` til dansk
+- Fjernet emoji-instruktioner fra titel-prompten
+- Titler genereres nu på dansk uden emojis
+- **NB:** Database-værdien kan overskrive kode-default — opdatér evt. via Docker exec
+
+### 14. Forbedrede danske oversættelser
+**Fil:** `src/lib/i18n/locales/da-DK/translation.json`
+
+| Nøgle | Før | Efter |
+|-------|-----|-------|
+| `How can I help you today?` | "Hvordan kan jeg hjælpe dig i dag med FAK?" | "Hvordan kan jeg hjælpe dig i dag?" |
+| `Reference Chats` | "Reference chats" | "Tidligere chats" |
+| `Image` | "Billede" | "Billedgenerering" |
+| `Regenerate` | "Regenerer" | "Prøv igen" |
 
 ---
 
@@ -158,6 +171,8 @@ Disse ændringer blev lavet via `http://localhost:8080` admin UI og gemmes i dat
 | Community sharing | Indstillinger → Generelt | Slået fra |
 | Signup | Indstillinger → Generelt | Slået fra |
 | Default locale | Indstillinger → Generelt | da-DK |
+| Web Search | Indstillinger → Web Search | Aktiveret, engine: DDGS (DuckDuckGo) |
+| Omgå Embedding og Retrieval | Indstillinger → Web Search | Slået til (sender søgeresultater direkte til modellen) |
 
 ---
 
@@ -216,4 +231,6 @@ uvicorn app:app --port 5100
 - Brugermenu viser kun Indstillinger, Admin, Arkiverede chats, Workspace, Log ud
 - Chat: ingen Read Aloud, Continue Response, Capture, Attach Webpage knapper
 - Profilbilleder viser FAK-logo som default (ugle-våbenskjold)
+- Web search virker via DDGS (DuckDuckGo) — kilder vises i chat
+- Chat-titler genereres på dansk uden emojis
 - Rating/feedback, kode-fortolker, RAG, mapper fungerer stadig

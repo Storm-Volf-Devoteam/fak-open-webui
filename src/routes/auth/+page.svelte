@@ -277,13 +277,6 @@
 										{/if}
 									</div>
 
-									<div class="flex justify-center mt-4 mb-2">
-										<img
-											src="/static/fak-logo.png"
-											class="h-28 w-auto"
-											alt="Forsvarsakademiet logo"
-										/>
-									</div>
 
 									{#if $config?.onboarding ?? false}
 										<div class="mt-1 text-xs font-medium text-gray-600 dark:text-gray-500">
