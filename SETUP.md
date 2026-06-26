@@ -78,7 +78,7 @@ Hjælp gerne med: opsummering, analyse, tekstudkast, forklaring af koncepter, st
 
 | Indstilling | Placering | Værdi |
 |---|---|---|
-| Bannere | Generelt → Bannere | "AI-genereret indhold kan være upræcist — verificér altid vigtige oplysninger. Al aktivitet logges i henhold til gældende sikkerhedsbestemmelser." |
+| Bannere | Generelt → Bannere | "AI-genereret indhold kan være upræcist — verificér vigtige oplysninger. Al aktivitet logges i henhold til gældende sikkerhedsbestemmelser." |
 | Temperatur | Generelt → Avanceret | 0.4 |
 | Community sharing | Generelt | Slået fra |
 | Signup | Generelt | Slået fra |
@@ -143,6 +143,26 @@ db.commit()
 db.close()
 "
 ```
+
+## 6. Billedgenerering med FLUX.2 (valgfrit)
+
+Kræver en separat terminal og en API-nøgle til DataCrunch/Verda.
+
+**Start FLUX.2-adapteren:**
+```bash
+cd flux-adapter
+pip install -r requirements.txt
+uvicorn app:app --port 5100
+```
+
+**Konfigurér i admin-panelet** (Admin → Indstillinger → Billeder):
+
+| Indstilling | Værdi |
+|---|---|
+| Enable Image Generation | Til |
+| Image Generation Engine | Default (OpenAI) |
+| API Base URL | `http://localhost:5100/v1` |
+| API Key | DataCrunch/Verda API-nøgle |
 
 ## Dokumentation
 
