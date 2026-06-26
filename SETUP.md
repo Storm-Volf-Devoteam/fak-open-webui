@@ -13,29 +13,18 @@ git clone git@github.com:Storm-Volf-Devoteam/fak-open-webui.git
 cd fak-open-webui
 ```
 
-## 2. Byg Docker image
+## 2. Byg og start med Docker Compose
 
 ```bash
-docker build -t fak-open-webui .
+docker compose up -d --build
 ```
 
-Bemærk: Første build tager 5-10 minutter.
+`--build` er vigtigt — det sikrer at image'et bygges fra den lokale kode med alle FAK-ændringer. Første build tager 5-10 minutter.
 
-## 3. Start containeren
-
-```bash
-docker run -d \
-  --name fak-open-webui \
-  -p 8080:8080 \
-  -v open-webui-data:/app/backend/data \
-  -e OPENAI_API_KEY=din-api-nøgle \
-  fak-open-webui
-```
-
-## 4. Åbn i browser
+## 3. Åbn i browser
 
 ```
-http://localhost:8080
+http://localhost:3000
 ```
 
 Opret en admin-bruger ved første login. Sprog er sat til dansk som default.
