@@ -127,52 +127,107 @@ Baseret på Open WebUI commit `02dc3e689` (main branch).
 | `Reference Chats` | "Reference chats" | "Tidligere chats" |
 | `Image` | "Billede" | "Billedgenerering" |
 | `Regenerate` | "Regenerer" | "Prøv igen" |
+| `Clone` | "Klon" | "Kopier" |
+| `Clone Chat` | "Klon chat" | "Kopier chat" |
+| `Clone of {{TITLE}}` | "Klon af {{TITLE}}" | "Kopi af {{TITLE}}" |
+| `Attach Files` | "" (tom) | "Vedhæft filer" |
+| `Was this response helpful?` | (ny) | "Var dette svar nyttigt?" |
 
----
+### 15. Simplificeret feedback-modal
+**Fil:** `src/lib/components/chat/Messages/RateComment.svelte`
+- Fjernet karaktergivning (1-10 skala)
+- Fjernet tags-input
+- Beholdt: reason-valg og kommentar-felt
 
-## Database-ændringer (via Docker exec)
+### 16. Banner vises under aktiv chat
+**Fil:** `src/lib/components/chat/Navbar.svelte`
+- Fjernet `!$chatId` betingelse, så advarselsbannerere også vises under aktiv chat
 
-Danske prompt-forslag blev skrevet direkte til SQLite-databasen i containeren:
-```bash
-docker exec open-webui-backend python3 -c "
-import sqlite3, json
-db = sqlite3.connect('/app/backend/data/webui.db')
-row = db.execute(\"SELECT data FROM config WHERE id=1\").fetchone()
-config = json.loads(row[0])
-config['ui']['prompt_suggestions'] = [
-    {'title': ['Opsummer', 'et dokument eller en rapport'], 'content': '...'},
-    {'title': ['Forklar', 'et fagligt koncept i simple termer'], 'content': '...'},
-    {'title': ['Skriv udkast', 'til en mail eller et notat'], 'content': '...'},
-    {'title': ['Analysér', 'fordele og ulemper ved en beslutning'], 'content': '...'},
-    {'title': ['Gennemgå', 'og forbedre en tekst'], 'content': '...'},
-    {'title': ['Giv overblik', 'over et emne'], 'content': '...'}
-]
-db.execute(\"UPDATE config SET data=? WHERE id=1\", [json.dumps(config, ensure_ascii=False)])
-db.commit()
-db.close()
-"
-```
+### 17. Feedback-opfordring ved svar
+**Fil:** `src/lib/components/chat/Messages/ResponseMessage.svelte`
+- Tilføjet "Var dette svar nyttigt?" tekst ved thumbs up/down-knapper på sidste besked
 
----
+### 18. Fjernet FAK-logo fra chat-fallback
+**Filer:** Alle filer der brugte `fak-logo.png` som fallback er ændret tilbage til `favicon.png`
+- FAK ønskede logoet fjernet helt fra chat — Open WebUI's favicon bruges nu som default
 
-## Admin-konfiguration (via admin-panelet)
+### 19. Permanent advarselsbanner (ingen dismiss-knap)
+**Filer:**
+- `src/lib/components/common/Banner.svelte` — Fjernet dismiss-knap (×)
+- `src/lib/components/chat/Navbar.svelte` — Fjernet dismiss-filtrering, banner vises altid
 
-Disse ændringer blev lavet via `http://localhost:8080` admin UI og gemmes i databasen:
+### 20. Omdøbning af UI-termer (dansk + engelsk)
+**Filer:**
+- `src/lib/i18n/locales/da-DK/translation.json`
+- `src/lib/i18n/locales/en-US/translation.json`
 
-| Indstilling | Placering | Værdi |
+| Original term | Dansk | Engelsk |
 |---|---|---|
-| Info-banner | Indstillinger → Generelt → Bannere | FAK intern platform-besked |
-| Response watermark | Indstillinger → Generelt → Vandmærke | Institutionel attribution |
-| System prompt | Indstillinger → Generelt → Systemprompt | Dansk FAK-prompt med `{{USER_NAME}}`, `{{CURRENT_DATE}}` |
-| Titel-generation prompt | Indstillinger → Grænseflade | Dansk prompt |
-| Tag-generation prompt | Indstillinger → Grænseflade | Dansk prompt |
-| Opfølgnings-generation prompt | Indstillinger → Grænseflade | Dansk prompt |
-| Temperatur | Indstillinger → Generelt → Avanceret | 0.4 |
-| Community sharing | Indstillinger → Generelt | Slået fra |
-| Signup | Indstillinger → Generelt | Slået fra |
-| Default locale | Indstillinger → Generelt | da-DK |
-| Web Search | Indstillinger → Web Search | Aktiveret, engine: DDGS (DuckDuckGo) |
-| Omgå Embedding og Retrieval | Indstillinger → Web Search | Slået til (sender søgeresultater direkte til modellen) |
+| Workspace | Opsætnings panel | Setup Panel |
+| Folder/Folders | Projekt/Projekter | Project/Projects |
+
+Workspace-sektionen (Opsætningspanelet) bruger "Agenter" for sine tilpassede modeller, mens Admin-indstillinger bruger "Modeller" for de rå provider-modeller. Ændret via separate i18n-nøgler:
+- Workspace-komponenter bruger nye nøgler: `Agents`, `New Agent`, `Search Agents`
+- Admin Settings-komponenter bruger standard `Models`-nøgler
+
+### 21. Bruger-profilbilleder låst til FAK-logo
+**Ændrede filer:**
+| Fil | Ændring |
+|-----|---------|
+| `src/lib/components/layout/Sidebar.svelte` | Sidebar avatar (collapsed + expanded) |
+| `src/lib/components/chat/Navbar.svelte` | Top-right avatar |
+| `src/lib/components/channel/Navbar.svelte` | Kanal-navbar avatar |
+| `src/lib/components/layout/Sidebar/UserMenu.svelte` | Dropdown-menu avatar |
+| `src/routes/+layout.svelte` | Browser-notification ikon |
+| `src/lib/components/chat/Settings/Account.svelte` | Profilbillede-redigering deaktiveret |
+
+- Alle bruger-profilbilleder viser nu altid `fak-logo.png`
+- Brugere kan ikke længere ændre deres profilbillede i indstillinger
+- Påvirker IKKE model-billeder, app-logo eller andre brugeres avatarer i kanaler/admin
+
+### 22. Kanaler genaktiveret
+**Fil:** `backend/open_webui/config.py`
+- Ændret `ENABLE_CHANNELS` default fra `'False'` til `'True'`
+
+### 23. Model-konfiguration via seed-script
+**Fil:** `scripts/fak-seed.py`
+- Omdøber 3 Mistral-modeller: mistral-small→Hurtig, mistral-medium→Balanceret, mistral-large→Kompleks
+- Disabler alle øvrige provider-modeller (henter listen fra Mistral API)
+- Idempotent med `--force` flag
+
+---
+
+## Docker deployment-konfiguration
+
+### Dockerfile-ændringer
+**Fil:** `Dockerfile`
+- Fjernet `--platform=$BUILDPLATFORM` fra `FROM node:22-alpine3.20 AS build`
+- Tilføjet `ENV NODE_OPTIONS="--max-old-space-size=4096"` før `RUN npm run build`
+- Tilføjet `COPY ./scripts/fak-seed.py /app/scripts/fak-seed.py`
+
+### Environment variables (docker-compose.yaml)
+
+Alle FAK-indstillinger sættes automatisk via env vars ved første opstart (tom database):
+
+| Indstilling | Env var | Værdi |
+|---|---|---|
+| Signup | `ENABLE_SIGNUP` | `false` |
+| Community sharing | `ENABLE_COMMUNITY_SHARING` | `false` |
+| Default locale | `DEFAULT_LOCALE` | `da-DK` |
+| Kanaler | `ENABLE_CHANNELS` | `true` |
+| Web search | `ENABLE_WEB_SEARCH` | `true` |
+| Søgemaskine | `WEB_SEARCH_ENGINE` | `ddgs` |
+| Bypass embedding | `BYPASS_WEB_SEARCH_EMBEDDING_AND_RETRIEVAL` | `true` |
+| Banner | `WEBUI_BANNERS` | JSON med FAK sikkerhedsbesked |
+| System prompt + temperatur | `DEFAULT_MODEL_PARAMS` | Dansk FAK-prompt, temp 0.4 |
+| LLM-forbindelse | `OPENAI_API_BASE_URLS` | `https://api.mistral.ai/v1` |
+| LLM API-nøgle | `OPENAI_API_KEYS` | Fra `.env` (MISTRAL_API_KEY) |
+| Billedgenerering | `ENABLE_IMAGE_GENERATION` | `true` |
+| Billed-engine | `IMAGE_GENERATION_ENGINE` | `openai` |
+| Billed-API URL | `IMAGES_OPENAI_API_BASE_URL` | `http://host.docker.internal:5100/v1` |
+| Billed-API-nøgle | `IMAGES_OPENAI_API_KEY` | Fra `.env` (FLUX_API_KEY) |
+
+**NB:** API-nøgler lever i `.env` (gitignored) og refereres via `${VAR}` i docker-compose.yaml.
 
 ---
 
@@ -217,10 +272,12 @@ uvicorn app:app --port 5100
 
 ## Deployment-instruktioner for teamet
 
-1. **Kodeændringer:** Checkout denne branch og byg frontend med `npm run build`
-2. **Database:** Kør prompt-suggestions scriptet ovenfor mod den nye container
-3. **Admin-konfiguration:** Gentag admin-indstillingerne fra tabellen ovenfor
-4. **Langfuse:** Tilføj OTEL env vars til Docker container når Langfuse-adgang er klar
+1. Klon repo og opret `.env` med API-nøgler (se `.env.example`)
+2. `docker compose up -d --build`
+3. Opret admin-bruger via `http://localhost:3000`
+4. `docker exec open-webui python3 /app/scripts/fak-seed.py`
+
+Se `SETUP.md` for detaljeret guide.
 
 ## Verifikation
 - `npm run build` kompilerer fejlfrit
@@ -230,7 +287,9 @@ uvicorn app:app --port 5100
 - Sidebar viser kun Workspace (ingen Notes, Calendar, Automations, Playground)
 - Brugermenu viser kun Indstillinger, Admin, Arkiverede chats, Workspace, Log ud
 - Chat: ingen Read Aloud, Continue Response, Capture, Attach Webpage knapper
-- Profilbilleder viser FAK-logo som default (ugle-våbenskjold)
 - Web search virker via DDGS (DuckDuckGo) — kilder vises i chat
 - Chat-titler genereres på dansk uden emojis
+- Kun 3 agenter synlige: Hurtig, Balanceret, Kompleks (rå modeller skjult)
+- Advarselsbanner permanent synligt (ingen dismiss-knap)
+- Kanaler tilgængelige i sidebar
 - Rating/feedback, kode-fortolker, RAG, mapper fungerer stadig

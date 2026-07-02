@@ -1,4 +1,4 @@
-# FAK Open WebUI — Hurtig opsætning
+# FAK Open WebUI — Opsætningsguide
 
 ## Forudsætninger
 
@@ -13,7 +13,19 @@ git clone git@github.com:Storm-Volf-Devoteam/fak-open-webui.git
 cd fak-open-webui
 ```
 
-## 2. Byg og start med Docker Compose
+## 2. Opret .env med API-nøgler
+
+```bash
+cp .env.example .env
+```
+
+Åbn `.env` og indsæt din Mistral API-nøgle:
+
+```
+MISTRAL_API_KEY=din-rigtige-nøgle-her
+```
+
+## 3. Byg og start med Docker Compose
 
 ```bash
 docker compose up -d --build
@@ -21,7 +33,7 @@ docker compose up -d --build
 
 `--build` er vigtigt — det sikrer at image'et bygges fra den lokale kode med alle FAK-ændringer. Første build tager 5-10 minutter.
 
-## 3. Åbn i browser
+## 4. Åbn i browser og opret admin
 
 ```
 http://localhost:3000
@@ -29,111 +41,45 @@ http://localhost:3000
 
 Opret en admin-bruger ved første login. Sprog er sat til dansk som default.
 
-## 5. Admin-konfiguration
+## 5. Kør seed-script
 
-Efter første login skal følgende konfigureres via admin-panelet (`http://localhost:8080` → Admin → Indstillinger):
+Seed-scriptet omdøber de 3 Mistral-modeller (Hurtig, Balanceret, Kompleks) og disabler alle øvrige modeller. Det kræver at admin-brugeren er oprettet først.
 
-### Generelt
-
-**System prompt** (Indstillinger → Generelt):
-```
-Du er en AI-assistent for Forsvarsakademiet (FAK). Du hjælper medarbejdere og studerende med faglige opgaver i en intern, sikker kontekst.
-
-Dato: {{CURRENT_DATE}} ({{CURRENT_WEEKDAY}})
-Bruger: {{USER_NAME}}
-
-## Svarkvalitet
-- Svar kort og præcist. Tilpas længden til spørgsmålet — et simpelt spørgsmål får et kort svar.
-- Brug aldrig emojis medmindre brugeren beder om det.
-- Undgå at gentage spørgsmålet eller opsummere hvad du er ved at gøre. Gå direkte til svaret.
-- Brug kun overskrifter og punktlister når det genuint forbedrer læsbarheden. Korte svar behøver ingen formatering.
-- Lav aldrig afsluttende opsummeringer der gentager det du allerede har sagt.
-- Når du bruger kilder fra websøgning: fremhæv de 3-5 vigtigste pointer, ikke alt indhold fra alle kilder.
-
-## Sprog og tone
-- Svar altid på dansk, medmindre brugeren eksplicit beder om et andet sprog.
-- Hold en professionel og præcis tone. Undgå uformel jargon.
-- Skriv i aktiv form. Undgå fyldord og unødvendige indledninger som "Selvfølgelig!" eller "Godt spørgsmål!".
-
-## Faglig integritet
-- Angiv tydeligt når du er usikker eller ikke har tilstrækkelig viden. Gæt aldrig på faktuelle oplysninger.
-- Du må ikke generere klassificeret eller følsomt indhold. Henvis til relevante fagpersoner ved sikkerhedsmæssige spørgsmål.
-
-## Kerneopgaver
-Hjælp gerne med: opsummering, analyse, tekstudkast, forklaring af koncepter, strukturering af argumenter og faglig sparring.
+```bash
+docker exec open-webui python3 /app/scripts/fak-seed.py
 ```
 
-**Øvrige indstillinger:**
+Scriptet er idempotent — safe at køre flere gange. Brug `--force` for at overskrive eksisterende ændringer.
 
-| Indstilling | Placering | Værdi |
-|---|---|---|
-| Bannere | Generelt → Bannere | "AI-genereret indhold kan være upræcist — verificér vigtige oplysninger. Al aktivitet logges i henhold til gældende sikkerhedsbestemmelser." |
-| Temperatur | Generelt → Avanceret | 0.4 |
-| Community sharing | Generelt | Slået fra |
-| Signup | Generelt | Slået fra |
-| Default locale | Generelt | da-DK |
+## Hvad er automatisk konfigureret?
 
-### Grænseflade (Indstillinger → Grænseflade)
-
-**Titel-generation prompt** — indsæt i feltet under "Automatisk titelgenerering":
-```
-### Task:
-Generate a concise, 3-5 word title summarizing the chat history.
-### Guidelines:
-- The title should clearly represent the main theme or subject of the conversation.
-- Do NOT use emojis. Do not use quotation marks or special formatting.
-- Write the title in Danish; default to English if multilingual.
-- Prioritize accuracy over excessive creativity; keep it clear and simple.
-- Your entire response must consist solely of the JSON object, without any introductory or concluding text.
-- The output must be a single, raw JSON object, without any markdown code fences or other encapsulating text.
-- Ensure no conversational text, affirmations, or explanations precede or follow the raw JSON output, as this will cause direct parsing failure.
-### Output:
-JSON format: { "title": "your concise title here" }
-### Examples:
-- { "title": "Aktiemarkeds tendenser" },
-- { "title": "Perfekt chokoladekage opskrift" },
-- { "title": "Udvikling af musikstreaming" },
-- { "title": "Produktivitetstips til fjernarbejde" },
-- { "title": "AI i sundhedssektoren" }
-### Chat History:
-<chat_history>
-{{MESSAGES:END:2}}
-</chat_history>
-```
-
-### Web Search (Indstillinger → Web Search)
+Følgende indstillinger sættes automatisk via environment variables i `docker-compose.yaml` (ved første opstart):
 
 | Indstilling | Værdi |
 |---|---|
-| Enable Web Search | Til |
-| Websøgemaskine | DDGS |
-| Omgå Embedding og Retrieval | Til |
+| Sprog | Dansk (da-DK) |
+| Signup | Slået fra |
+| Community sharing | Slået fra |
+| Web search | Aktiveret (DuckDuckGo) |
+| Bypass embedding for web search | Til |
+| Advarselsbanner | FAK sikkerhedsbesked (permanent, kan ikke fjernes) |
+| System prompt | Dansk FAK-prompt med `{{USER_NAME}}` og `{{CURRENT_DATE}}` |
+| Temperatur | 0.4 |
+| Titel-generering | Dansk, uden emojis (code default) |
+| Mistral LLM-forbindelse | Automatisk via env var (API-nøgle fra `.env`) |
+| Billedgenerering | FLUX.2 adapter (valgfrit, kræver separat service) |
 
-### Prompt-forslag (via terminal)
+### Modeller (via seed-script)
 
-Kør dette for at sætte danske prompt-forslag på forsiden:
+Seed-scriptet omdøber 3 Mistral-modeller og disabler alle øvrige:
 
-```bash
-docker exec fak-open-webui python3 -c "
-import sqlite3, json
-db = sqlite3.connect('/app/backend/data/webui.db')
-row = db.execute(\"SELECT data FROM config WHERE id=1\").fetchone()
-config = json.loads(row[0])
-config['ui']['prompt_suggestions'] = [
-    {'title': ['Opsummer', 'et dokument eller en rapport'], 'content': 'Opsummer følgende dokument eller rapport. Fremhæv de vigtigste pointer, konklusioner og eventuelle anbefalinger.'},
-    {'title': ['Forklar', 'et fagligt koncept i simple termer'], 'content': 'Forklar følgende koncept i klare, simple termer som en ikke-specialist kan forstå:'},
-    {'title': ['Skriv udkast', 'til en mail eller et notat'], 'content': 'Skriv et professionelt udkast til en mail eller et notat om følgende emne:'},
-    {'title': ['Analysér', 'fordele og ulemper ved en beslutning'], 'content': 'Analysér fordele og ulemper ved følgende beslutning eller forslag:'},
-    {'title': ['Gennemgå', 'og forbedre en tekst'], 'content': 'Gennemgå følgende tekst og foreslå forbedringer til sprog, struktur og klarhed:'},
-    {'title': ['Giv overblik', 'over et emne'], 'content': 'Giv et struktureret overblik over følgende emne:'}
-]
-db.execute(\"UPDATE config SET data=? WHERE id=1\", [json.dumps(config, ensure_ascii=False)])
-db.commit()
-db.close()
-"
-```
+| Vist navn | Mistral model-ID | Beskrivelse |
+|---|---|---|
+| Hurtig | mistral-small-latest | Til simple opgaver |
+| Balanceret | mistral-medium-latest | Anbefalet til de fleste opgaver |
+| Kompleks | mistral-large-latest | Grundigt svar, tager længere tid |
 
-## 6. Billedgenerering med FLUX.2 (valgfrit)
+## Billedgenerering med FLUX.2 (valgfrit)
 
 Kræver en separat terminal og en API-nøgle til DataCrunch/Verda.
 
