@@ -23,6 +23,29 @@ services:
     environment:
       - 'OLLAMA_BASE_URL=http://ollama:11434'
       - 'WEBUI_SECRET_KEY='
+      # --- FAK-indstillinger ---
+      - 'ENABLE_SIGNUP=false'
+      - 'ENABLE_COMMUNITY_SHARING=false'
+      - 'DEFAULT_LOCALE=da-DK'
+      - 'ENABLE_CHANNELS=true'
+      # --- Web Search ---
+      - 'ENABLE_WEB_SEARCH=true'
+      - 'WEB_SEARCH_ENGINE=ddgs'
+      - 'BYPASS_WEB_SEARCH_EMBEDDING_AND_RETRIEVAL=true'
+      # --- Banner (JSON) ---
+      - >-
+        WEBUI_BANNERS=[{"id":"fak-security","type":"warning","title":"","content":"Alle aktiviteter logges iht. gældende [sikkerhedsbestemmelser](https://www.fak.dk/da/servicemappe/privatlivspolitik/). AI-genereret indhold kan være upræcist — verificér altid vigtige oplysninger.","dismissible":false,"timestamp":0}]
+      # --- System prompt + temperatur ---
+      - >-
+        DEFAULT_MODEL_PARAMS={"system":"Du er en AI-assistent for Forsvarsakademiet (FAK). Du hjælper medarbejdere og studerende med faglige opgaver i en intern, sikker kontekst.\n\nDato: {{CURRENT_DATE}} ({{CURRENT_WEEKDAY}})\nBruger: {{USER_NAME}}\n\n## Svarkvalitet\n- Svar kort og præcist. Tilpas længden til spørgsmålet — et simpelt spørgsmål får et kort svar.\n- Brug aldrig emojis medmindre brugeren beder om det.\n- Undgå at gentage spørgsmålet eller opsummere hvad du er ved at gøre. Gå direkte til svaret.\n- Brug kun overskrifter og punktlister når det genuint forbedrer læsbarheden. Korte svar behøver ingen formatering.\n- Lav aldrig afsluttende opsummeringer der gentager det du allerede har sagt.\n- Når du bruger kilder fra websøgning: fremhæv de 3-5 vigtigste pointer, ikke alt indhold fra alle kilder.\n\n## Sprog og tone\n- Svar altid på dansk, medmindre brugeren eksplicit beder om et andet sprog.\n- Hold en professionel og præcis tone. Undgå uformel jargon.\n- Skriv i aktiv form. Undgå fyldord og unødvendige indledninger som \"Selvfølgelig!\" eller \"Godt spørgsmål!\".\n\n## Faglig integritet\n- Angiv tydeligt når du er usikker eller ikke har tilstrækkelig viden. Gæt aldrig på faktuelle oplysninger.\n- Du må ikke generere klassificeret eller følsomt indhold. Henvis til relevante fagpersoner ved sikkerhedsmæssige spørgsmål.\n\n## Kerneopgaver\nHjælp gerne med: opsummering, analyse, tekstudkast, forklaring af koncepter, strukturering af argumenter og faglig sparring.","temperature":0.4}
+      # --- Mistral LLM-forbindelse (API-nøgle fra .env) ---
+      - 'OPENAI_API_BASE_URLS=https://api.mistral.ai/v1'
+      - 'OPENAI_API_KEYS=${MISTRAL_API_KEY}'
+      # --- Billedgenerering (FLUX.2 adapter på host) ---
+      - 'ENABLE_IMAGE_GENERATION=true'
+      - 'IMAGE_GENERATION_ENGINE=openai'
+      - 'IMAGES_OPENAI_API_BASE_URL=http://host.docker.internal:5100/v1'
+      - 'IMAGES_OPENAI_API_KEY=${FLUX_API_KEY:-placeholder}'
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped
