@@ -2903,7 +2903,7 @@ FOLDER_MAX_FILE_COUNT = ConfigVar(
 ENABLE_CHANNELS = ConfigVar(
     'ENABLE_CHANNELS',
     'channels.enable',
-    os.getenv('ENABLE_CHANNELS', 'False').lower() == 'true',
+    os.getenv('ENABLE_CHANNELS', 'True').lower() == 'true',
 )
 
 ENABLE_CALENDAR = ConfigVar(
