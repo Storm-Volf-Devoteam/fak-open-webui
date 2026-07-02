@@ -212,7 +212,7 @@
 							>
 								<div class=" self-center">
 									<img
-										src={`${WEBUI_API_BASE_URL}/users/${$user?.id}/profile/image`}
+										src="/static/fak-logo.png"
 										class="size-6 object-cover rounded-full"
 										alt="User profile"
 										draggable="false"

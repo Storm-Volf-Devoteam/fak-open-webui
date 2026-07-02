@@ -934,7 +934,7 @@
 							>
 								<div class="self-center relative">
 									<img
-										src={`${WEBUI_API_BASE_URL}/users/${$user?.id}/profile/image`}
+										src="/static/fak-logo.png"
 										class=" size-7 object-cover rounded-full"
 										alt={$i18n.t('Open User Profile Menu')}
 										aria-label={$i18n.t('Open User Profile Menu')}
@@ -1532,7 +1532,7 @@
 							>
 								<div class=" self-center mr-3 relative flex-shrink-0">
 									<img
-										src={`${WEBUI_API_BASE_URL}/users/${$user?.id}/profile/image`}
+										src="/static/fak-logo.png"
 										class=" size-7 object-cover rounded-full"
 										alt={$i18n.t('Open User Profile Menu')}
 										aria-label={$i18n.t('Open User Profile Menu')}

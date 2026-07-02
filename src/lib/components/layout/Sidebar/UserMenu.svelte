@@ -128,7 +128,7 @@
 				<div class=" flex gap-3.5 w-full p-2.5 items-center">
 					<div class=" items-center flex shrink-0">
 						<img
-							src={`${WEBUI_API_BASE_URL}/users/${$user?.id}/profile/image`}
+							src="/static/fak-logo.png"
 							class=" size-10 object-cover rounded-full"
 							alt="profile"
 						/>

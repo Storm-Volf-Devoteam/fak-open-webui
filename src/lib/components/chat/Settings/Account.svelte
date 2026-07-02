@@ -138,7 +138,13 @@
 			<!-- <div class=" text-sm font-medium">{$i18n.t('Account')}</div> -->
 
 			<div class="flex space-x-5 my-4">
-				<UserProfileImage bind:profileImageUrl user={$user} />
+				<div class="self-center">
+					<img
+						src="/static/fak-logo.png"
+						alt="profile"
+						class="rounded-full size-14 md:size-18 object-cover"
+					/>
+				</div>
 
 				<div class="flex flex-1 flex-col">
 					<div class=" flex-1">

@@ -739,7 +739,7 @@
 					if ($settings?.notificationEnabled ?? false) {
 						new Notification(`${title} • Open WebUI`, {
 							body: data?.content,
-							icon: `${WEBUI_API_BASE_URL}/users/${data?.user?.id}/profile/image`
+							icon: `/static/fak-logo.png`
 						});
 					}
 				}
