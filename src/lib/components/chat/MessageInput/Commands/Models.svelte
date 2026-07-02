@@ -87,7 +87,7 @@
 						alt={model?.name ?? model.id}
 						class="rounded-full size-5 items-center mr-2"
 						on:error={(e) => {
-							e.currentTarget.src = '/static/fak-logo.png';
+							e.currentTarget.src = '/static/favicon.png';
 						}}
 					/>
 					<div class="truncate">

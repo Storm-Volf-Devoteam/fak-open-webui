@@ -132,7 +132,7 @@
 											aria-hidden="true"
 											draggable="false"
 											on:error={(e) => {
-												e.currentTarget.src = '/static/fak-logo.png';
+												e.currentTarget.src = '/static/favicon.png';
 											}}
 										/>
 									</button>

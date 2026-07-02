@@ -84,7 +84,7 @@
 						class="rounded-full size-5 flex items-center"
 						loading="lazy"
 						on:error={(e) => {
-							e.currentTarget.src = '/static/fak-logo.png';
+							e.currentTarget.src = '/static/favicon.png';
 						}}
 					/>
 				</Tooltip>
