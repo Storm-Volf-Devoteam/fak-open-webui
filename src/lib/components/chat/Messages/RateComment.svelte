@@ -2,8 +2,7 @@
 	import { toast } from 'svelte-sonner';
 
 	import { createEventDispatcher, onMount, getContext } from 'svelte';
-	import { config, models, tags as _tags } from '$lib/stores';
-	import Tags from '$lib/components/common/Tags.svelte';
+	import { config, models } from '$lib/stores';
 	import XMark from '$lib/components/icons/XMark.svelte';
 	import ChevronRight from '$lib/components/icons/ChevronRight.svelte';
 
@@ -34,13 +33,10 @@
 		'other'
 	];
 
-	let tags = [];
-
 	let reasons = [];
 	let selectedReason = null;
 	let comment = '';
 
-	let detailedRating = null;
 	let selectedModel = null;
 
 	$: if (message?.annotation?.rating === 1) {
@@ -62,13 +58,6 @@
 			comment = message?.annotation?.comment ?? '';
 		}
 
-		tags = (message?.annotation?.tags ?? []).map((tag) => ({
-			name: tag
-		}));
-
-		if (!detailedRating) {
-			detailedRating = message?.annotation?.details?.rating ?? null;
-		}
 	};
 
 	onMount(() => {
@@ -92,10 +81,8 @@
 		dispatch('save', {
 			reason: selectedReason,
 			comment: comment,
-			tags: tags.map((tag) => tag.name),
-			details: {
-				rating: detailedRating
-			}
+			tags: [],
+			details: {}
 		});
 
 		toast.success($i18n.t('Thanks for your feedback!'));
@@ -128,39 +115,6 @@
 		>
 			<XMark className={'size-4'} />
 		</button>
-	</div>
-
-	<div class="w-full flex justify-center">
-		<div class=" relative w-fit overflow-x-auto scrollbar-none">
-			<div class="mt-1.5 w-fit flex gap-1 pb-2">
-				<!-- 1-10 scale -->
-				{#each Array.from({ length: 10 }).map((_, i) => i + 1) as rating}
-					<button
-						aria-label={$i18n.t('Rate {{rating}} out of 10', { rating })}
-						class="size-7 text-sm border border-gray-100/30 dark:border-gray-850/30 hover:bg-gray-50 dark:hover:bg-gray-850 {detailedRating ===
-						rating
-							? 'bg-gray-100 dark:bg-gray-800'
-							: ''} transition rounded-full disabled:cursor-not-allowed disabled:text-gray-500 disabled:bg-white dark:disabled:bg-gray-900"
-						on:click={() => {
-							detailedRating = rating;
-						}}
-						disabled={message?.annotation?.rating === -1 ? rating > 5 : rating < 6}
-					>
-						{rating}
-					</button>
-				{/each}
-			</div>
-
-			<div class="sticky top-0 bottom-0 left-0 right-0 flex justify-between text-xs">
-				<div>
-					1 - {$i18n.t('Awful')}
-				</div>
-
-				<div>
-					10 - {$i18n.t('Amazing')}
-				</div>
-			</div>
-		</div>
 	</div>
 
 	<div>
@@ -225,24 +179,7 @@
 		/>
 	</div>
 
-	<div class="mt-2 gap-1.5 flex justify-between">
-		<div class="flex items-end group">
-			<Tags
-				{tags}
-				suggestionTags={$_tags ?? []}
-				on:delete={(e) => {
-					tags = tags.filter(
-						(tag) =>
-							tag.name.replaceAll(' ', '_').toLowerCase() !==
-							e.detail.replaceAll(' ', '_').toLowerCase()
-					);
-				}}
-				on:add={(e) => {
-					tags = [...tags, { name: e.detail }];
-				}}
-			/>
-		</div>
-
+	<div class="mt-2 flex justify-end">
 		<button
 			class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full"
 			on:click={() => {

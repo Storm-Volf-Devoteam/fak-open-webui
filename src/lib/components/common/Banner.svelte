@@ -132,16 +132,6 @@
 					</div>
 				</div>
 			{/if}
-			<div class="flex self-start">
-				<button
-					aria-label={$i18n.t('Close Banner')}
-					on:click={() => {
-						dismiss(banner.id);
-					}}
-					class="  -mt-1 -mb-2 -translate-y-[1px] ml-1.5 mr-1 text-gray-400 dark:hover:text-white"
-					>&times;</button
-				>
-			</div>
 		</div>
 	{/if}
 {/if}

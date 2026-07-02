@@ -913,6 +913,11 @@
 
 								{#if !readOnly}
 									{#if !$temporaryChatEnabled && ($config?.features.enable_message_rating ?? true) && ($user?.role === 'admin' || ($user?.permissions?.chat?.rate_response ?? true))}
+									{#if isLastMessage}
+										<span class="text-xs text-gray-400 dark:text-gray-500 self-center mr-1">
+											{$i18n.t('Was this response helpful?')}
+										</span>
+									{/if}
 										<Tooltip content={$i18n.t('Good Response')} placement="bottom">
 											<button
 												aria-label={$i18n.t('Good Response')}
